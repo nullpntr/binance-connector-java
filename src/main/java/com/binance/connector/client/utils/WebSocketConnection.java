@@ -1,22 +1,11 @@
 package com.binance.connector.client.utils;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
+import com.binance.connector.client.utils.websocketcallback.*;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.binance.connector.client.exceptions.BinanceConnectorException;
-import com.binance.connector.client.utils.websocketcallback.WebSocketClosedCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketClosingCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketFailureCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketMessageCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketOpenCallback;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebSocketConnection extends WebSocketListener {
     private static final AtomicInteger connectionCounter = new AtomicInteger(0);
@@ -75,9 +64,9 @@ public class WebSocketConnection extends WebSocketListener {
     }
 
     public void send(String message) {
-        if (null == webSocket) {
-            throw new BinanceConnectorException("No WebSocket connection. Please connect first!");
-        } 
+//        if (null == webSocket) {
+//            throw new BinanceConnectorException("No WebSocket connection. Please connect first!");
+//        }
         webSocket.send(message);
     }
 
