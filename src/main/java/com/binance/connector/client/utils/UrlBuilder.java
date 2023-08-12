@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -54,18 +53,16 @@ public final class UrlBuilder {
     */
     public static StringBuilder joinQueryParameters(StringBuilder sb, Map<String, Object> params) {
         if (params != null && !params.isEmpty()) {
-            Iterator<String> keys = params.keySet().iterator();
-            while (keys.hasNext()) {
-                String key = keys.next();
+            for (String key : params.keySet()) {
                 sb.append(key);
                 sb.append("=");
 
-                String value;
-                if (params.get(key) instanceof Double) {
-                    value = getFormatter().format(params.get(key));
-                } else {
-                    value = params.get(key).toString();
-                }
+                String value = params.get(key).toString();
+//                if (params.get(key) instanceof Double) {
+//                    value = getFormatter().format(params.get(key));
+//                } else {
+//                    value = params.get(key).toString();
+//                }
                 sb.append(urlEncode(value));
 
                 sb.append("&");

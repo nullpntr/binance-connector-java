@@ -1,13 +1,13 @@
 package com.binance.connector.client.utils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class JSONParser {
 
@@ -54,11 +54,10 @@ public final class JSONParser {
     }
 
     public static Map<String, Object> sortJSONObject(JSONObject parameters) {
-        LinkedList<String> keys = new LinkedList<>(parameters.keySet());
-        Map<String, Object> sortedParams = new LinkedHashMap<>();
-        keys.stream().sorted().forEach(key -> sortedParams.put(key, parameters.get(key)));
-
-        return sortedParams;
+        return parameters.toMap().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     public static JSONObject addKeyValue(JSONObject parameters, String key, Object value) {

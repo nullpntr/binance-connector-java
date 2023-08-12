@@ -1,10 +1,9 @@
 package com.binance.connector.client.impl.websocketapi;
 
-import org.json.JSONObject;
-
 import com.binance.connector.client.utils.JSONParser;
 import com.binance.connector.client.utils.ParameterChecker;
 import com.binance.connector.client.utils.websocketapi.WebSocketApiRequestHandler;
+import org.json.JSONObject;
 
 /**
  * <h2>Trading Requests</h2>
@@ -51,14 +50,14 @@ public class WebSocketApiTrade {
      */
     public void newOrder(String symbol, String side, String type, JSONObject parameters) {
 
-        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
-        ParameterChecker.checkParameterType(side, String.class, "side");
-        ParameterChecker.checkParameterType(type, String.class, "type");
+//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
+//        ParameterChecker.checkParameterType(side, String.class, "side");
+//        ParameterChecker.checkParameterType(type, String.class, "type");
 
-        parameters = JSONParser.addKeyValue(parameters, "symbol", symbol);
-        parameters = JSONParser.addKeyValue(parameters, "side", side);
-        parameters = JSONParser.addKeyValue(parameters, "type", type);
-        
+        parameters.put("symbol", symbol);
+        parameters.put("side", side);
+        parameters.put("type", type);
+
         this.handler.signedRequest("order.place", parameters);
     }
 
@@ -146,10 +145,10 @@ public class WebSocketApiTrade {
      *     https://binance-docs.github.io/apidocs/websocket_api/en/#cancel-order-trade</a>
      */
     public void cancelOrder(String symbol, JSONObject parameters) {
-        ParameterChecker.checkOneOfParametersRequired(parameters, "orderId", "origClientOrderId");
-        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
+//        ParameterChecker.checkOneOfParametersRequired(parameters, "orderId", "origClientOrderId");
+//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
 
-        parameters = JSONParser.addKeyValue(parameters, "symbol", symbol);
+        parameters.put("symbol", symbol);
         this.handler.signedRequest("order.cancel", parameters);
     }
 
@@ -188,16 +187,16 @@ public class WebSocketApiTrade {
      */
     public void cancelReplaceOrder(String symbol, String cancelReplaceMode, String side, String type, JSONObject parameters) {
 
-        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
-        ParameterChecker.checkParameterType(cancelReplaceMode, String.class, "cancelReplaceMode");
-        ParameterChecker.checkParameterType(side, String.class, "side");
-        ParameterChecker.checkParameterType(type, String.class, "type");
-        ParameterChecker.checkOneOfParametersRequired(parameters, "cancelOrderId", "cancelOrigClientOrderId");
+//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
+//        ParameterChecker.checkParameterType(cancelReplaceMode, String.class, "cancelReplaceMode");
+//        ParameterChecker.checkParameterType(side, String.class, "side");
+//        ParameterChecker.checkParameterType(type, String.class, "type");
+//        ParameterChecker.checkOneOfParametersRequired(parameters, "cancelOrderId", "cancelOrigClientOrderId");
 
-        parameters = JSONParser.addKeyValue(parameters, "symbol", symbol);
-        parameters = JSONParser.addKeyValue(parameters, "cancelReplaceMode", cancelReplaceMode);
-        parameters = JSONParser.addKeyValue(parameters, "side", side);
-        parameters = JSONParser.addKeyValue(parameters, "type", type);
+        parameters.put("symbol", symbol);
+        parameters.put("cancelReplaceMode", cancelReplaceMode);
+        parameters.put("side", side);
+        parameters.put("type", type);
 
         this.handler.signedRequest("order.cancelReplace", parameters);
     }

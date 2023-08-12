@@ -3,22 +3,13 @@ package com.binance.connector.client.impl;
 import com.binance.connector.client.WebSocketApiClient;
 import com.binance.connector.client.enums.DefaultUrls;
 import com.binance.connector.client.exceptions.BinanceConnectorException;
-import com.binance.connector.client.impl.websocketapi.WebSocketApiAccount;
-import com.binance.connector.client.impl.websocketapi.WebSocketApiGeneral;
-import com.binance.connector.client.impl.websocketapi.WebSocketApiMarket;
-import com.binance.connector.client.impl.websocketapi.WebSocketApiTrade;
-import com.binance.connector.client.impl.websocketapi.WebSocketApiUserDataStream;
+import com.binance.connector.client.impl.websocketapi.*;
 import com.binance.connector.client.utils.RequestBuilder;
 import com.binance.connector.client.utils.WebSocketConnection;
 import com.binance.connector.client.utils.httpclient.WebSocketApiHttpClientSingleton;
 import com.binance.connector.client.utils.signaturegenerator.SignatureGenerator;
 import com.binance.connector.client.utils.websocketapi.WebSocketApiRequestHandler;
-import com.binance.connector.client.utils.websocketcallback.WebSocketClosedCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketClosingCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketFailureCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketMessageCallback;
-import com.binance.connector.client.utils.websocketcallback.WebSocketOpenCallback;
-
+import com.binance.connector.client.utils.websocketcallback.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -90,6 +81,7 @@ public class WebSocketApiClientImpl implements WebSocketApiClient {
 
         this.connection = new WebSocketConnection(onOpenCallback, onMessageCallback, onClosingCallback, onClosedCallback, onFailureCallback, request, client);
         this.requestHandler = new WebSocketApiRequestHandler(this.connection, this.apiKey, this.signatureGenerator);
+        this.wsApiTrade = new WebSocketApiTrade(this.requestHandler);
         this.connection.connect();
     }
 
@@ -115,8 +107,8 @@ public class WebSocketApiClientImpl implements WebSocketApiClient {
 
     @Override
     public WebSocketApiTrade trade() {
-        checkRequestHandler();
-        checkCategoryInstance(this.wsApiTrade, WebSocketApiTrade.class);
+//        checkRequestHandler();
+//        checkCategoryInstance(this.wsApiTrade, WebSocketApiTrade.class);
         return this.wsApiTrade;
     }
 

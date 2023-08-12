@@ -3,12 +3,12 @@ package com.binance.connector.client.utils.websocketapi;
 import com.binance.connector.client.enums.RequestType;
 import com.binance.connector.client.exceptions.BinanceConnectorException;
 import com.binance.connector.client.utils.JSONParser;
-import com.binance.connector.client.utils.ParameterChecker;
 import com.binance.connector.client.utils.UrlBuilder;
 import com.binance.connector.client.utils.WebSocketConnection;
 import com.binance.connector.client.utils.signaturegenerator.SignatureGenerator;
-
 import org.json.JSONObject;
+
+import java.util.UUID;
 
 public class WebSocketApiRequestHandler {
     private final SignatureGenerator signatureGenerator;
@@ -42,26 +42,26 @@ public class WebSocketApiRequestHandler {
     }
 
     public void request(RequestType requestType, String method, JSONObject parameters) {
-        Object requestId = ParameterChecker.processId(JSONParser.pullValue(parameters, "requestId"), "requestId"); 
-        ParameterChecker.checkParameterType(method, String.class, "method");
+        Object requestId = UUID.randomUUID().toString();
+//        ParameterChecker.checkParameterType(method, String.class, "method");
 
         switch (requestType) {
             case PUBLIC:
                 this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
                 break;
             case WITH_API_KEY:
-                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
-                parameters = JSONParser.addKeyValue(parameters, "apiKey", this.apiKey);
+//                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
+                parameters.put("apiKey", this.apiKey);
 
                 this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
                 break;
             case SIGNED:
-                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
-                parameters = JSONParser.addKeyValue(parameters, "apiKey", this.apiKey);
-                parameters.put("timestamp", UrlBuilder.buildTimestamp());
+//                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
+                parameters.put("apiKey", this.apiKey);
+                parameters.put("timestamp", System.currentTimeMillis());
 
                 // signature
-                ParameterChecker.checkParameterType(this.signatureGenerator, SignatureGenerator.class, "signatureGenerator");
+//                ParameterChecker.checkParameterType(this.signatureGenerator, SignatureGenerator.class, "signatureGenerator");
                 String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
                 String signature = this.signatureGenerator.getSignature(payload);
                 parameters.put("signature", signature);
