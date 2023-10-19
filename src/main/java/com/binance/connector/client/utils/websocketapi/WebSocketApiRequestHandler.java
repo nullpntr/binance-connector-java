@@ -59,7 +59,7 @@ public class WebSocketApiRequestHandler {
 //                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
                 parameters.put("apiKey", this.apiKey);
                 if (!parameters.has("timestamp")) {
-                    parameters.put("timestamp", UrlBuilder.buildTimestamp());
+                    parameters.put("timestamp", System.currentTimeMillis());
                 }
 
                 // signature
