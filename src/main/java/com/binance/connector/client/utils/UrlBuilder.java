@@ -57,14 +57,13 @@ public final class UrlBuilder {
                 sb.append(key);
                 sb.append("=");
 
-                String value = params.get(key).toString();
+//                String value = params.get(key).toString();
 //                if (params.get(key) instanceof Double) {
 //                    value = getFormatter().format(params.get(key));
 //                } else {
 //                    value = params.get(key).toString();
 //                }
-                sb.append(urlEncode(value));
-
+                sb.append(params.get(key));
                 sb.append("&");
             }
             sb.deleteCharAt(sb.length() - DIFF_TILL_POSITION_INDEX);
