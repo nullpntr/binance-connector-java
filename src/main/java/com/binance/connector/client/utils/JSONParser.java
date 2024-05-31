@@ -1,13 +1,14 @@
 package com.binance.connector.client.utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.alibaba.fastjson2.JSON;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public final class JSONParser {
 
@@ -53,8 +54,16 @@ public final class JSONParser {
         }
     }
 
-    public static Map<String, Object> sortJSONObject(JSONObject parameters) {
-        return parameters.toMap().entrySet().stream()
+    public static String buildJSONString(Object id, String method, Map<String, Object> parameters) {
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("id", id);
+        jsonMap.put("method", method);
+        jsonMap.put("params", parameters);
+        return JSON.toJSONString(jsonMap);
+    }
+
+    public static Map<String, Object> sortJSONObject(Map<String, Object> parameters) {
+        return parameters.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));

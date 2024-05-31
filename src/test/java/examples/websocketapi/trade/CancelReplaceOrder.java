@@ -1,13 +1,12 @@
 package examples.websocketapi.trade;
 
-import org.json.JSONObject;
-
 import com.binance.connector.client.WebSocketApiClient;
 import com.binance.connector.client.enums.DefaultUrls;
 import com.binance.connector.client.impl.WebSocketApiClientImpl;
 import com.binance.connector.client.utils.signaturegenerator.HmacSignatureGenerator;
-
 import examples.PrivateConfig;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CancelReplaceOrder {
 
@@ -25,8 +24,8 @@ public final class CancelReplaceOrder {
         wsApiClient.connect(((message) -> {
             System.out.println(message);
         }));
-      
-        JSONObject params = new JSONObject();
+
+        Map<String, Object> params = new HashMap<>();
         params.put("requestId", "randomId");
         params.put("quantity", quantity);
         params.put("cancelOrigClientOrderId", "randomClientOrderId");

@@ -3,6 +3,7 @@ package com.binance.connector.client.impl.websocketapi;
 import com.binance.connector.client.utils.JSONParser;
 import com.binance.connector.client.utils.ParameterChecker;
 import com.binance.connector.client.utils.websocketapi.WebSocketApiRequestHandler;
+import java.util.Map;
 import org.json.JSONObject;
 
 /**
@@ -48,7 +49,7 @@ public class WebSocketApiTrade implements WebSocketApiModule {
      * @see <a href="https://binance-docs.github.io/apidocs/websocket_api/en/#place-new-order-trade">
      *     https://binance-docs.github.io/apidocs/websocket_api/en/#place-new-order-trade</a>
      */
-    public void newOrder(String symbol, String side, String type, JSONObject parameters) {
+    public void newOrder(String symbol, String side, String type, Map<String, Object> parameters) {
 
 //        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
 //        ParameterChecker.checkParameterType(side, String.class, "side");
@@ -146,7 +147,7 @@ public class WebSocketApiTrade implements WebSocketApiModule {
      * @see <a href="https://binance-docs.github.io/apidocs/websocket_api/en/#cancel-order-trade">
      *     https://binance-docs.github.io/apidocs/websocket_api/en/#cancel-order-trade</a>
      */
-    public void cancelOrder(String symbol, JSONObject parameters) {
+    public void cancelOrder(String symbol, Map<String, Object> parameters) {
 //        ParameterChecker.checkOneOfParametersRequired(parameters, "orderId", "origClientOrderId");
 //        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
 
@@ -188,7 +189,7 @@ public class WebSocketApiTrade implements WebSocketApiModule {
      * @see <a href="https://binance-docs.github.io/apidocs/websocket_api/en/#cancel-and-replace-order-trade">
      *     https://binance-docs.github.io/apidocs/websocket_api/en/#cancel-and-replace-order-trade</a>
      */
-    public void cancelReplaceOrder(String symbol, String cancelReplaceMode, String side, String type, JSONObject parameters) {
+    public void cancelReplaceOrder(String symbol, String cancelReplaceMode, String side, String type, Map<String, Object> parameters) {
 
 //        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
 //        ParameterChecker.checkParameterType(cancelReplaceMode, String.class, "cancelReplaceMode");

@@ -6,9 +6,9 @@ import com.binance.connector.client.utils.JSONParser;
 import com.binance.connector.client.utils.UrlBuilder;
 import com.binance.connector.client.utils.WebSocketConnection;
 import com.binance.connector.client.utils.signaturegenerator.SignatureGenerator;
-import org.json.JSONObject;
-
+import java.util.Map;
 import java.util.UUID;
+import org.json.JSONObject;
 
 public class WebSocketApiRequestHandler {
     private final SignatureGenerator signatureGenerator;
@@ -65,10 +65,40 @@ public class WebSocketApiRequestHandler {
 
                 // signature
 //                ParameterChecker.checkParameterType(this.signatureGenerator, SignatureGenerator.class, "signatureGenerator");
-                String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
+                String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters.toMap()));
                 String signature = this.signatureGenerator.getSignature(payload);
                 parameters.put("signature", signature);
 
+                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
+                break;
+            default:
+                throw new BinanceConnectorException("[WebSocketApiRequestHandler] Invalid request type: " + requestType);
+        }
+    }
+
+    public void signedRequest(String method, Map<String, Object> parameters) {
+        RequestType requestType = this.connection.getSessionStatus() ? RequestType.PUBLIC : RequestType.SIGNED;
+        this.request1(requestType, method, parameters);
+    }
+
+    public void request1(RequestType requestType, String method, Map<String, Object> parameters) {
+        Object requestId = UUID.randomUUID().toString();
+        switch (requestType) {
+            case PUBLIC:
+                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
+                break;
+            case WITH_API_KEY:
+                parameters.put("apiKey", this.apiKey);
+                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
+                break;
+            case SIGNED:
+                parameters.put("apiKey", this.apiKey);
+                if (!parameters.containsKey("timestamp")) {
+                    parameters.put("timestamp", System.currentTimeMillis());
+                }
+                String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
+                String signature = this.signatureGenerator.getSignature(payload);
+                parameters.put("signature", signature);
                 this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
                 break;
             default:

@@ -42,33 +42,17 @@ public final class UrlBuilder {
      * @return The String representation of the joined query parameters.
     */
     public static String joinQueryParameters(Map<String, Object> params) {
-        return joinQueryParameters(new StringBuilder(), params).toString();
-    }
-
-    /**
-     * Joins query parameters from a Map into a StringBuilder representation.
-     * @param sb The StringBuilder to append the query parameters to.
-     * @param params The Map containing the query parameters.
-     * @return The StringBuilder representation of the joined query parameters.
-    */
-    public static StringBuilder joinQueryParameters(StringBuilder sb, Map<String, Object> params) {
+        StringBuilder sb = new StringBuilder();
         if (params != null && !params.isEmpty()) {
             for (String key : params.keySet()) {
                 sb.append(key);
                 sb.append("=");
-
-//                String value = params.get(key).toString();
-//                if (params.get(key) instanceof Double) {
-//                    value = getFormatter().format(params.get(key));
-//                } else {
-//                    value = params.get(key).toString();
-//                }
                 sb.append(params.get(key));
                 sb.append("&");
             }
             sb.deleteCharAt(sb.length() - DIFF_TILL_POSITION_INDEX);
         }
-        return sb;
+        return sb.toString();
     }
 
     /**
