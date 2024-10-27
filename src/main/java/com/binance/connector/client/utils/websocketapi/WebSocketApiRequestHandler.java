@@ -28,9 +28,10 @@ public class WebSocketApiRequestHandler {
 
     public void apiRequest(String method, JSONObject parameters) {
         // check is session logon executed so not to sign requests
-        if (!connection.isAuthorized()) {
+        //FIXME in this case session.logon doesn't work as expected from documentation
+//        if (!connection.isAuthorized()) {
             parameters.put("apiKey", this.apiKey);
-        }
+//        }
         connection.send(JSONParser.buildJSONString(method, parameters));
     }
 
