@@ -26,11 +26,15 @@ public final class CancelReplaceOrder {
         }));
 
         Map<String, Object> params = new HashMap<>();
+        params.put("symbol", "BTCUSDT");
+        params.put("cancelReplaceMode", "STOP_ON_FAILURE");
+        params.put("side", "BUY");
+        params.put("type", "MARKET");
         params.put("requestId", "randomId");
         params.put("quantity", quantity);
         params.put("cancelOrigClientOrderId", "randomClientOrderId");
       
-        wsApiClient.trade().cancelReplaceOrder("BTCUSDT", "STOP_ON_FAILURE", "BUY", "MARKET", params);
+        wsApiClient.trade().cancelReplaceOrder(params);
       
         Thread.sleep(waitTime);
       

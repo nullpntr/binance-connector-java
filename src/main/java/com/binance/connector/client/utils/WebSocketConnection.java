@@ -1,30 +1,26 @@
 package com.binance.connector.client.utils;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.binance.connector.client.exceptions.BinanceConnectorException;
 import com.binance.connector.client.utils.websocketcallback.WebSocketClosedCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketClosingCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketFailureCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketMessageCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketOpenCallback;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebSocketConnection extends WebSocketListener {
     private static final AtomicInteger connectionCounter = new AtomicInteger(0);
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConnection.class);
     private static OkHttpClient client;
-    private static boolean sessionStatus;
+    private boolean authorized;
 
     private final int connectionId;
     private final Object mutex;
@@ -76,8 +72,12 @@ public class WebSocketConnection extends WebSocketListener {
         return connectionId;
     }
 
-    public boolean getSessionStatus() {
-        return sessionStatus;
+    public boolean isAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(boolean authorized) {
+        this.authorized = authorized;
     }
 
     public void send(String message) {
@@ -114,12 +114,6 @@ public class WebSocketConnection extends WebSocketListener {
 
     @Override
     public void onMessage(WebSocket ws, String text) {
-
-        // session status
-        if (text.contains("authorizedSince")) {
-            JSONObject result =  new JSONObject(text).getJSONObject("result");
-            WebSocketConnection.sessionStatus = !result.isNull("authorizedSince");
-        }
         onMessageCallback.onMessage(text);
     }
 

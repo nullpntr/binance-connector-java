@@ -1,13 +1,11 @@
 package com.binance.connector.client.utils.websocketapi;
 
-import com.binance.connector.client.enums.RequestType;
 import com.binance.connector.client.exceptions.BinanceConnectorException;
 import com.binance.connector.client.utils.JSONParser;
 import com.binance.connector.client.utils.UrlBuilder;
 import com.binance.connector.client.utils.WebSocketConnection;
 import com.binance.connector.client.utils.signaturegenerator.SignatureGenerator;
 import java.util.Map;
-import java.util.UUID;
 import org.json.JSONObject;
 
 public class WebSocketApiRequestHandler {
@@ -24,85 +22,98 @@ public class WebSocketApiRequestHandler {
         this.signatureGenerator = signatureGenerator;
     }
 
-    public void publicRequest(String method) {
-        this.request(RequestType.PUBLIC, method, null);
-    }
-
     public void publicRequest(String method, JSONObject parameters) {
-        this.request(RequestType.PUBLIC, method, parameters);
+        connection.send(JSONParser.buildJSONString(method, parameters));
     }
 
     public void apiRequest(String method, JSONObject parameters) {
-        RequestType requestType = this.connection.getSessionStatus() ? RequestType.PUBLIC : RequestType.WITH_API_KEY;
-        this.request(requestType, method, parameters);
+        // check is session logon executed so not to sign requests
+        if (!connection.isAuthorized()) {
+            parameters.put("apiKey", this.apiKey);
+        }
+        connection.send(JSONParser.buildJSONString(method, parameters));
     }
 
     public void signedRequest(String method, JSONObject parameters) {
-        RequestType requestType = this.connection.getSessionStatus() ? RequestType.PUBLIC : RequestType.SIGNED;
-        this.request(requestType, method, parameters);
-    }
-
-    public void request(RequestType requestType, String method, JSONObject parameters) {
-        Object requestId = UUID.randomUUID().toString();
-//        ParameterChecker.checkParameterType(method, String.class, "method");
-
-        switch (requestType) {
-            case PUBLIC:
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            case WITH_API_KEY:
-//                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
-                parameters.put("apiKey", this.apiKey);
-
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            case SIGNED:
-//                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
-                parameters.put("apiKey", this.apiKey);
-                if (!parameters.has("timestamp")) {
-                    parameters.put("timestamp", System.currentTimeMillis());
-                }
-
-                // signature
+        parameters.put("timestamp", System.currentTimeMillis());
+        // check is session logon executed so not to sign requests
+        if (!connection.isAuthorized()) {
+            parameters.put("apiKey", this.apiKey);
+            // signature
 //                ParameterChecker.checkParameterType(this.signatureGenerator, SignatureGenerator.class, "signatureGenerator");
-                String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters.toMap()));
-                String signature = this.signatureGenerator.getSignature(payload);
-                parameters.put("signature", signature);
-
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            default:
-                throw new BinanceConnectorException("[WebSocketApiRequestHandler] Invalid request type: " + requestType);
+            String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters.toMap()));
+            String signature = this.signatureGenerator.getSignature(payload);
+            parameters.put("signature", signature);
         }
+        connection.send(JSONParser.buildJSONString(method, parameters));
     }
+
+//    public void request(RequestType requestType, String method, JSONObject parameters) {
+////        ParameterChecker.checkParameterType(method, String.class, "method");
+//        switch (requestType) {
+//            case PUBLIC:
+//                break;
+//            case WITH_API_KEY:
+////                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
+//                // check is session logon executed so not to sign requests
+//                if (!connection.isAuthorized()) {
+//                    parameters.put("apiKey", this.apiKey);
+//                }
+//                break;
+//            case SIGNED:
+////                ParameterChecker.checkParameterType(this.apiKey, String.class, "apiKey");
+//                parameters.put("timestamp", System.currentTimeMillis());
+//                // check is session logon executed so not to sign requests
+//                if (!connection.isAuthorized()) {
+//                    parameters.put("apiKey", this.apiKey);
+//                    // signature
+////                ParameterChecker.checkParameterType(this.signatureGenerator, SignatureGenerator.class, "signatureGenerator");
+//                    String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters.toMap()));
+//                    String signature = this.signatureGenerator.getSignature(payload);
+//                    parameters.put("signature", signature);
+//                }
+//                break;
+//            default:
+//                throw new BinanceConnectorException("[WebSocketApiRequestHandler] Invalid request type: " + requestType);
+//        }
+//        connection.send(JSONParser.buildJSONString(UUID.randomUUID().toString(), method, parameters));
+//    }
 
     public void signedRequest(String method, Map<String, Object> parameters) {
-        RequestType requestType = this.connection.getSessionStatus() ? RequestType.PUBLIC : RequestType.SIGNED;
-        this.request1(requestType, method, parameters);
+        parameters.put("timestamp", System.currentTimeMillis());
+        // check is session logon executed so not to sign requests
+        if (!connection.isAuthorized()) {
+            parameters.put("apiKey", this.apiKey);
+            String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
+            String signature = this.signatureGenerator.getSignature(payload);
+            parameters.put("signature", signature);
+        }
+        connection.send(JSONParser.buildJSONString(method, parameters));
     }
 
-    public void request1(RequestType requestType, String method, Map<String, Object> parameters) {
-        Object requestId = UUID.randomUUID().toString();
-        switch (requestType) {
-            case PUBLIC:
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            case WITH_API_KEY:
-                parameters.put("apiKey", this.apiKey);
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            case SIGNED:
-                parameters.put("apiKey", this.apiKey);
-                if (!parameters.containsKey("timestamp")) {
-                    parameters.put("timestamp", System.currentTimeMillis());
-                }
-                String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
-                String signature = this.signatureGenerator.getSignature(payload);
-                parameters.put("signature", signature);
-                this.connection.send(JSONParser.buildJSONString(requestId, method, parameters));
-                break;
-            default:
-                throw new BinanceConnectorException("[WebSocketApiRequestHandler] Invalid request type: " + requestType);
-        }
-    }
+//    public void request(RequestType requestType, String method, Map<String, Object> parameters) {
+//        switch (requestType) {
+//            case PUBLIC:
+//                break;
+//            case WITH_API_KEY:
+//                // check is session logon executed so not to sign requests
+//                if (!connection.isAuthorized()) {
+//                    parameters.put("apiKey", this.apiKey);
+//                }
+//                break;
+//            case SIGNED:
+//                parameters.put("timestamp", System.currentTimeMillis());
+//                // check is session logon executed so not to sign requests
+//                if (!connection.isAuthorized()) {
+//                    parameters.put("apiKey", this.apiKey);
+//                    String payload = UrlBuilder.joinQueryParameters(JSONParser.sortJSONObject(parameters));
+//                    String signature = this.signatureGenerator.getSignature(payload);
+//                    parameters.put("signature", signature);
+//                }
+//                break;
+//            default:
+//                throw new BinanceConnectorException("[WebSocketApiRequestHandler] Invalid request type: " + requestType);
+//        }
+//        connection.send(JSONParser.buildJSONString(UUID.randomUUID().toString(), method, parameters));
+//    }
 }

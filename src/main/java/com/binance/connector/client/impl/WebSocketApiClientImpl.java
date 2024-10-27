@@ -20,7 +20,6 @@ import com.binance.connector.client.utils.websocketcallback.WebSocketClosingCall
 import com.binance.connector.client.utils.websocketcallback.WebSocketFailureCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketMessageCallback;
 import com.binance.connector.client.utils.websocketcallback.WebSocketOpenCallback;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -116,4 +115,8 @@ public class WebSocketApiClientImpl implements WebSocketApiClient {
         return (WebSocketApiUserDataStream) WebSocketApiModuleFactory.build(Category.USER_DATA_STREAM, this.requestHandler);
     }
 
+    @Override
+    public void setAuthorized() {
+        connection.setAuthorized(true);
+    }
 }

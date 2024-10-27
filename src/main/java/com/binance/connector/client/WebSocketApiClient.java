@@ -16,6 +16,7 @@ public interface WebSocketApiClient {
     void connect(WebSocketMessageCallback onMessageCallback);
     void connect(WebSocketOpenCallback onOpenCallback, WebSocketMessageCallback onMessageCallback, WebSocketClosingCallback onClosingCallback, WebSocketClosedCallback onClosedCallback, WebSocketFailureCallback onFailureCallback);
     void close();
+    void setAuthorized();
     WebSocketApiAccount account();
     WebSocketApiAuth auth();
     WebSocketApiGeneral general();

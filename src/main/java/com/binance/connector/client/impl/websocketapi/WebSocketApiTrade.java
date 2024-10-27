@@ -21,44 +21,7 @@ public class WebSocketApiTrade implements WebSocketApiModule {
         this.handler = handler;
     }
 
-    /**
-     * Send in a new order.<br>
-     * 
-     * Additional mandatory parameters (*) are determined by the new order type.<br>
-     * 
-     * @param symbol String
-     * @param side String -- BUY or SELL
-     * @param type String
-     * @param parameters JSONObject composed by key-value pairs:
-     * <br><br>
-     * timeInForce -- optional/String <br>
-     * price -- optional/double <br>
-     * quantity -- optional/double <br>
-     * quoteOrderQty -- optional/double <br>
-     * newClientOrderId -- optional/String -- Arbitrary unique ID among open orders. Automatically generated if not sent<br>
-     * newOrderRespType -- optional/String -- Select response format: ACK, RESULT, FULL. MARKET and LIMIT orders use FULL by default, other order types default to ACK.<br>
-     * stopPrice -- optional/double <br>
-     * trailingDelta -- optional/int -- see https://github.com/binance/binance-spot-api-docs/blob/master/faqs/trailing-stop-faq.md<br>
-     * icebergQty -- optional/double <br>
-     * strategyId -- optional/int -- Arbitrary numeric value identifying the order within an order strategy.<br>
-     * strategyType -- optional/int -- Arbitrary numeric value identifying the order strategy. Values smaller than 1000000 are reserved and cannot be used.<br>
-     * selfTradePreventionMode -- optional/String -- The allowed enums is dependent on what is configured on the symbol. The possible supported values are EXPIRE_TAKER, EXPIRE_MAKER, EXPIRE_BOTH, NONE.<br>
-     * recvWindow -- optional/int -- The value cannot be greater than 60000<br>
-     * requestId -- optional/String or int <br>
-     * 
-     * @see <a href="https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#place-new-order-trade">
-     *     https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#place-new-order-trade</a>
-     */
-    public void newOrder(String symbol, String side, String type, Map<String, Object> parameters) {
-
-//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
-//        ParameterChecker.checkParameterType(side, String.class, "side");
-//        ParameterChecker.checkParameterType(type, String.class, "type");
-
-        parameters.put("symbol", symbol);
-        parameters.put("side", side);
-        parameters.put("type", type);
-
+    public void newOrder(Map<String, Object> parameters) {
         this.handler.signedRequest("order.place", parameters);
     }
 
@@ -129,79 +92,11 @@ public class WebSocketApiTrade implements WebSocketApiModule {
         this.handler.signedRequest("order.status", parameters);
     }
 
-    /**
-     * Cancel an active order.<br>
-     * 
-     * If both orderId and origClientOrderId parameters are specified, only orderId is used and origClientOrderId is ignored.<br>
-     * 
-     * @param symbol String
-     * @param parameters JSONObject composed by key-value pairs:
-     * <br><br>
-     * orderId -- optional/int -- Cancel order by orderId<br>
-     * origClientOrderId -- optional/String -- Cancel order by clientOrderId<br>
-     * newClientOrderId -- optional/String -- New ID for the canceled order. Automatically generated if not sent<br>
-     * cancelRestrictions -- optional/enum -- Supported values: ONLY_NEW - Cancel will succeed if the order status is NEW. ONLY_PARTIALLY_FILLED - Cancel will succeed if order status is PARTIALLY_FILLED.<br>
-     * recvWindow -- optional/int -- The value cannot be greater than 60000<br>
-     * requestId -- optional/String or int <br>
-     * 
-     * @see <a href="https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#cancel-order-trade">
-     *     https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#cancel-order-trade</a>
-     */
-    public void cancelOrder(String symbol, Map<String, Object> parameters) {
-//        ParameterChecker.checkOneOfParametersRequired(parameters, "orderId", "origClientOrderId");
-//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
-
-        parameters.put("symbol", symbol);
+    public void cancelOrder(Map<String, Object> parameters) {
         this.handler.signedRequest("order.cancel", parameters);
     }
 
-    /**
-     * Cancel an existing order and immediately place a new order instead of the canceled one.<br>
-     * 
-     * Similar to the order.place request, additional mandatory parameters (*) are determined by the new order type.<br>
-     * If both cancelOrderId and cancelOrigClientOrderId parameters are specified, only cancelOrderId is used and cancelOrigClientOrderId is ignored.<br>
-     * 
-     * @param symbol String
-     * @param cancelReplaceMode String -- STOP_ON_FAILURE or ALLOW_FAILURE
-     * @param side String -- BUY or SELL
-     * @param type String
-     * @param parameters JSONObject composed by key-value pairs:
-     * <br><br>
-     * cancelOrderId -- optional/int -- Cancel order by orderId<br>
-     * cancelOrigClientOrderId -- optional/String -- Cancel order by clientOrderId<br>
-     * cancelNewClientOrderId -- optional/String -- New ID for the canceled order. Automatically generated if not sent<br>
-     * timeInForce -- optional/String <br>
-     * price -- optional/double <br>
-     * quantity -- optional/double <br>
-     * quoteOrderQty -- optional/double <br>
-     * newClientOrderId -- optional/String -- Arbitrary unique ID among open orders. Automatically generated if not sent<br>
-     * newOrderRespType -- optional/String -- Select response format: ACK, RESULT, FULL. MARKET and LIMIT orders use FULL by default, other order types default to ACK.<br>
-     * stopPrice -- optional/double <br>
-     * trailingDelta -- optional/int -- see https://github.com/binance/binance-spot-api-docs/blob/master/faqs/trailing-stop-faq.md<br>
-     * icebergQty -- optional/double <br>
-     * strategyId -- optional/int -- Arbitrary numeric value identifying the order within an order strategy.<br>
-     * strategyType -- optional/int -- Arbitrary numeric value identifying the order strategy. Values smaller than 1000000 are reserved and cannot be used.<br>
-     * selfTradePreventionMode -- optional/String -- The allowed enums is dependent on what is configured on the symbol. The possible supported values are EXPIRE_TAKER, EXPIRE_MAKER, EXPIRE_BOTH, NONE.<br>
-     * cancelRestrictions -- optional/enum -- Supported values: ONLY_NEW - Cancel will succeed if the order status is NEW. ONLY_PARTIALLY_FILLED - Cancel will succeed if order status is PARTIALLY_FILLED.<br>
-     * recvWindow -- optional/int -- The value cannot be greater than 60000<br>
-     * requestId -- optional/String or int <br>
-     * 
-     * @see <a href="https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#cancel-and-replace-order-trade">
-     *     https://developers.binance.com/docs/binance-spot-api-docs/web-socket-api#cancel-and-replace-order-trade</a>
-     */
-    public void cancelReplaceOrder(String symbol, String cancelReplaceMode, String side, String type, Map<String, Object> parameters) {
-
-//        ParameterChecker.checkParameterType(symbol, String.class, "symbol");
-//        ParameterChecker.checkParameterType(cancelReplaceMode, String.class, "cancelReplaceMode");
-//        ParameterChecker.checkParameterType(side, String.class, "side");
-//        ParameterChecker.checkParameterType(type, String.class, "type");
-//        ParameterChecker.checkOneOfParametersRequired(parameters, "cancelOrderId", "cancelOrigClientOrderId");
-
-        parameters.put("symbol", symbol);
-        parameters.put("cancelReplaceMode", cancelReplaceMode);
-        parameters.put("side", side);
-        parameters.put("type", type);
-
+    public void cancelReplaceOrder(Map<String, Object> parameters) {
         this.handler.signedRequest("order.cancelReplace", parameters);
     }
 

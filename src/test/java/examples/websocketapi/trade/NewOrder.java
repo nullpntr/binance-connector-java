@@ -26,10 +26,13 @@ public final class NewOrder {
         }));
 
         Map<String, Object> params = new HashMap<>();
+        params.put("symbol", "BTCUSDT");
+        params.put("side", "BUY");
+        params.put("type", "MARKET");
         params.put("requestId", "randomId");
         params.put("quantity", quantity);
       
-        wsApiClient.trade().newOrder("BTCUSDT", "BUY", "MARKET", params);
+        wsApiClient.trade().newOrder(params);
       
         Thread.sleep(waitTime);
       

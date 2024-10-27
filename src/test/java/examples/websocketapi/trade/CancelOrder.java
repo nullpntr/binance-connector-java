@@ -26,9 +26,10 @@ public final class CancelOrder {
         }));
 
         Map<String, Object> params = new HashMap<>();
+        params.put("symbol", "BTCUSDT");
         params.put("orderId", orderId);
       
-        wsApiClient.trade().cancelOrder("BTCUSDT", params);
+        wsApiClient.trade().cancelOrder(params);
       
         Thread.sleep(waitTime);
       

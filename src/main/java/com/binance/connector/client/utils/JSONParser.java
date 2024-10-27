@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,10 +43,10 @@ public final class JSONParser {
         }
     }
 
-    public static String buildJSONString(Object id, String method, JSONObject parameters) {
+    public static String buildJSONString(String method, JSONObject parameters) {
         try {
             JSONObject json = new JSONObject();
-            json.put("id", id);
+            json.put("id", UUID.randomUUID().toString());
             json.put("method", method);
             json.put("params", parameters);
             return json.toString();
@@ -54,9 +55,9 @@ public final class JSONParser {
         }
     }
 
-    public static String buildJSONString(Object id, String method, Map<String, Object> parameters) {
+    public static String buildJSONString(String method, Map<String, Object> parameters) {
         Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("id", id);
+        jsonMap.put("id", UUID.randomUUID().toString());
         jsonMap.put("method", method);
         jsonMap.put("params", parameters);
         return JSON.toJSONString(jsonMap);
